@@ -9,63 +9,66 @@ public class ManagerScript : MonoBehaviour {
     public GameObject gameOverMenu;
     public GameObject playerCamera;
     public GameObject meteorCountText;
-    [SerializeField]
-    private int numberOfMeteors = 100;
-    private int meteorsDestroyed = 0;
 
     void Start ()
     {
         spawnPlayer();
-        Player.GetComponent<PlayerController>().gameOverMenu = gameOverMenu;
-        Player.GetComponent<CameraControlls>().playerCamera = playerCamera;
 
         //Random.seed = 1; obsolete in this version
+
+        optimize();
+
         Random.InitState(1);
-        while (numberOfMeteors > 0)
+
+        for (int i = 0; i < 128; i++)
         {
-            populateSpace();
-            numberOfMeteors--;
+            for (int j = 0; j < 128; j++)
+            {
+                if (i == 64 && j == 64)
+                {
+                    continue;
+                }
+                Instantiate(Meteor, new Vector2(i, j) * 5, Quaternion.AngleAxis(Random.Range(0, 360), new Vector3(0, 0, 1)));
+            }
         }
-    }
-
-    private void populateSpace()
-    {
-        int randomX;
-        int randomY;
-
-        do
-        {
-            randomX = Random.Range(-500, 500);
-            randomY = Random.Range(-500, 500);
-        }
-        while(IsWithin(randomX, 0, 32) && IsWithin(randomY, 0,32));
-
-        Instantiate(Meteor, new Vector2(randomX, randomY), Quaternion.AngleAxis(randomX, new Vector3(0,0,1)));
-        //newMeteor.transform.parent = gameObject.transform;
+        Instantiate(Meteor, new Vector2(128, 129) * 5, Quaternion.AngleAxis(Random.Range(0, 360), new Vector3(0, 0, 1))); // so they are exactly 16 384
     }
 
     private void spawnPlayer()
     {
         Player = Instantiate(Player, gameObject.transform.position, gameObject.transform.rotation);
         gameObject.transform.SetParent(Player.transform);
+        Player.GetComponent<PlayerController>().gameOverMenu = gameOverMenu;
+        Player.GetComponent<CameraControlls>().playerCamera = playerCamera;
+        Player.GetComponent<FireProjectile>().meteorCountText = meteorCountText;
     }
 
-    public static bool IsWithin(float value, float minimum, float maximum)
+    private void optimize()
     {
-        return value >= minimum && value <= maximum;
+        int[] layernums = new int[] {0,1,2,4,5,8,9};
+        Physics2D.velocityIterations = 6;
+        Physics2D.positionIterations = 2;
+
+        foreach (int number in layernums)
+        {
+            foreach (int number2 in layernums)
+                Physics2D.IgnoreLayerCollision(number, number2, true);
+        }
+        Physics2D.IgnoreLayerCollision(0, 0, false);
+
+        Time.fixedDeltaTime = 0.05f;
     }
 
-    public void show(object sender, OnDeathEventArgs e)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        meteorsDestroyed++;
-        meteorCountText.GetComponent<UnityEngine.UI.Text>().text = "Meteors Destroyed: " + meteorsDestroyed;
-
+        
+        gameOverMenu.SetActive(true);
+        Destroy(Player);
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        MeteorDestruction md = collision.GetComponent<MeteorDestruction>();
-        if (md != null)
-            md.meteorDestroyed += show;
-    }
+  
+
+
+    
+
 }

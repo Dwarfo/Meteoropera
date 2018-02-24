@@ -7,7 +7,6 @@ public class PlayerStateInput : MonoBehaviour {
     public static bool gamePaused;
     public PlayerController pC;
 
-
     void Start ()
     {
         gamePaused = false;
@@ -32,7 +31,6 @@ public class PlayerStateInput : MonoBehaviour {
         {
             pC.rotSide(2);
         }
-
 
     }
 

@@ -6,6 +6,7 @@ public class ProjectileController : MonoBehaviour{
 
     public float projectileSpeed;
     public float destroingDelay = 3.0f;
+    
 
     private MeteorDestruction deathNotificator;
 
@@ -17,12 +18,18 @@ public class ProjectileController : MonoBehaviour{
         gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * projectileSpeed, ForceMode2D.Impulse);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
+    {
+        deathNotificator.OnDestruction(new OnDeathEventArgs());
+        Destroy(gameObject);
+    }*/
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         deathNotificator.OnDestruction(new OnDeathEventArgs());
         Destroy(gameObject);
     }
 
-  
+
 
 }

@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour {
     public Rigidbody2D Player;
     public GameObject explosion;
     public GameObject gameOverMenu;
-    public float Acceleration = 200f;
+    public float Acceleration = 80f;
 
 
     // Use this for initialization
@@ -28,14 +28,5 @@ public class PlayerController : MonoBehaviour {
         transform.Rotate(0, 0, side, Space.World);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Destroy(gameObject);
-    }
-
-    private void OnDestroy()
-    {
-        gameOverMenu.SetActive(true);
-        Instantiate(explosion, transform.position, transform.rotation);
-    }
+  
 }
