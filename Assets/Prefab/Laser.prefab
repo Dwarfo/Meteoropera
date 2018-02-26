@@ -111,8 +111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2827c19edc06d1d4ba142d8253269971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileSpeed: 30
-  destroingDelay: 2
+  projectileSpeed: 40
+  destroingDelay: 3
 --- !u!212 &212495533715165954
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProjectileController : MonoBehaviour{
 
-    public float projectileSpeed;
+    public float projectileSpeed = 40f;
     public float destroingDelay = 3.0f;
     
 

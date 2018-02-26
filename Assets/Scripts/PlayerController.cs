@@ -6,7 +6,6 @@ public class PlayerController : MonoBehaviour {
 
     public Rigidbody2D Player;
     public GameObject explosion;
-    public GameObject gameOverMenu;
     public float Acceleration = 80f;
 
 

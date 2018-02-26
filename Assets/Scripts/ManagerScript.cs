@@ -9,13 +9,22 @@ public class ManagerScript : MonoBehaviour {
     public GameObject gameOverMenu;
     public GameObject playerCamera;
     public GameObject meteorCountText;
+    public AndroidControls androidControls;
+    
+    private void Awake()
+    {
+        #if UNITY_ANDROID
+            //androidControls.pC = Player.GetComponent<PlayerController>();
+        #endif
+        #if UNITY_STANDALONE_WIN
+            Destroy(androidControls.gameObject);
+        #endif
+    }
 
     void Start ()
     {
         spawnPlayer();
-
-        //Random.seed = 1; obsolete in this version
-
+        androidControls.pC = Player.GetComponent<PlayerController>();
         optimize();
 
         Random.InitState(1);
@@ -31,14 +40,13 @@ public class ManagerScript : MonoBehaviour {
                 Instantiate(Meteor, new Vector2(i, j) * 5, Quaternion.AngleAxis(Random.Range(0, 360), new Vector3(0, 0, 1)));
             }
         }
-        Instantiate(Meteor, new Vector2(128, 129) * 5, Quaternion.AngleAxis(Random.Range(0, 360), new Vector3(0, 0, 1))); // so they are exactly 16 384
+        Instantiate(Meteor, new Vector2(128, 129) * 5, Quaternion.AngleAxis(Random.Range(0, 360), new Vector3(0, 0, 1))); //and one more so they are exactly 16 384
     }
 
     private void spawnPlayer()
     {
         Player = Instantiate(Player, gameObject.transform.position, gameObject.transform.rotation);
         gameObject.transform.SetParent(Player.transform);
-        Player.GetComponent<PlayerController>().gameOverMenu = gameOverMenu;
         Player.GetComponent<CameraControlls>().playerCamera = playerCamera;
         Player.GetComponent<FireProjectile>().meteorCountText = meteorCountText;
     }
@@ -46,22 +54,21 @@ public class ManagerScript : MonoBehaviour {
     private void optimize()
     {
         int[] layernums = new int[] {0,1,2,4,5,8,9};
-        Physics2D.velocityIterations = 6;
-        Physics2D.positionIterations = 2;
+        Physics2D.velocityIterations = 2;
+        Physics2D.positionIterations = 1;
 
         foreach (int number in layernums)
         {
             foreach (int number2 in layernums)
-                Physics2D.IgnoreLayerCollision(number, number2, true);
+                Physics2D.IgnoreLayerCollision(number, number2, true);// make all layered collisions ignored
         }
-        Physics2D.IgnoreLayerCollision(0, 0, false);
+        Physics2D.IgnoreLayerCollision(0, 0, false);// except one that matters
 
-        Time.fixedDeltaTime = 0.05f;
+        Time.fixedDeltaTime = 0.04f;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {
-        
+    {     
         gameOverMenu.SetActive(true);
         Destroy(Player);
     }
